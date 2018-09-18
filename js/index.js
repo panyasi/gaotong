@@ -1,16 +1,16 @@
 $(function(){
   var indexPage = {
     init:function(){
-      this.setItem();
+      this.setSwiperItem();
       this.bind();
     },
     bind:function(){
-      $('.toggle-item').on('click',this.toggleItemActive);
+      $('.online-toggle-item').on('click',this.toggleItemActive);
       $('.item-section').on('click',this.itemSectionStopPro);
       $(window).on('scroll',this.navScroll);
       $('.nav-list li').on('click',this.scrollToSection);
-      $('.right-btn').on('click',this.nextCheckoutItem);
-      $('.left-btn').on('click',this.preCheckoutItem);
+      $('.swiper-right-btn').on('click',this.nextCheckoutItem);
+      $('.swiper-left-btn').on('click',this.preCheckoutItem);
       $('.video-mask').on('click',this.videoPlayEvent);
       $('.video-icon').on('click',this.videoPlayEvent);
       $('#video-js').on('click',this.videoPauseEvent);
@@ -45,32 +45,50 @@ $(function(){
           scrollTop: eleTop
       }, 200);
     },
-    initLeft:-960,
+    data:{
+      initLeft:-960,
+      isLock:false,
+    },  
     nextCheckoutItem:function(){
-      indexPage.initLeft = indexPage.initLeft-240;
-      // console.log(indexPage.initLeft)
-      $('.teacher-list').animate({'left':indexPage.initLeft +'px'},300,function(){
-        if(indexPage.initLeft <= -2160){
-          indexPage.initLeft = -960;
-          $('.teacher-list').css('left',indexPage.initLeft+'px')
+      indexPage.data.initLeft = indexPage.data.initLeft-240;
+      // console.log(indexPage.data.initLeft)
+      var isLock = indexPage.data.isLock;
+      if(isLock){
+        return;
+      }else{
+        indexPage.data.isLock = true;
+      };
+      $('.teacher-list').animate({'left':indexPage.data.initLeft +'px'},300,function(){
+        if(indexPage.data.initLeft <= -2160){
+          indexPage.data.initLeft = -960;
+          $('.teacher-list').css('left',indexPage.data.initLeft+'px')
           console.log()
         }
+        indexPage.data.isLock = false;
       })
     },
     preCheckoutItem:function(){
-      indexPage.initLeft = indexPage.initLeft+240;
-      // console.log(indexPage.initLeft)
-      $('.teacher-list').animate({'left':indexPage.initLeft +'px'},300,function(){
-        if(indexPage.initLeft >= 0){
-          indexPage.initLeft = -1200;
-          $('.teacher-list').css('left',indexPage.initLeft+'px')
-          console.log(indexPage.initLeft)
-        }
-      })
+      indexPage.data.initLeft = indexPage.data.initLeft+240;
+      // console.log(indexPage.data.initLeft)
+      var isLock = indexPage.data.isLock;
+      if(isLock){
+        return;
+      }else{
+        indexPage.data.isLock = true;
+      };
+      $('.teacher-list').animate({'left':indexPage.data.initLeft +'px'},300,function(){
+        if(indexPage.data.initLeft >= 0){
+          indexPage.data.initLeft = -1200;
+          $('.teacher-list').css('left',indexPage.data.initLeft+'px')
+          // console.log(indexPage.data.initLeft)
+        };
+        indexPage.data.isLock = false;
+      });
     },
-    setItem:function(){
+    setSwiperItem:function(){
       var firstItem = $('.teacher-item').not(':first').clone();
       var lastItem = $('.teacher-item').not(':last').clone();
+      let itemWidth = $('.teacher-item').width();
       $('.teacher-list').append(lastItem);
       $('.teacher-list').prepend(firstItem);
     },
@@ -81,14 +99,12 @@ $(function(){
       $('#video-js').addClass('paly'); 
     },
     videoPauseEvent:function(){
-      for (var i = 0; i < $('#video-js').length; i++) {
-        if(this.paused){
-            $('#video-js').trigger('play');
-        }else{
-            $('#video-js').trigger('pause');
-            indexPage.videoControlsShow();
-        }        
-      }
+      if(this.paused){
+          $('#video-js').trigger('play');
+      }else{
+          $('#video-js').trigger('pause');
+          indexPage.videoControlsShow();
+      }        
     },
     videoControlsShow:function(){
       var myVideo = document.getElementById('video-js');
